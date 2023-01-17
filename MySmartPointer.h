@@ -27,18 +27,16 @@ public:
         pointer = otherPointer;
         counter = new RefCounter();
         counter->increment();
-        //if (DEBUG) std::cout<<"zwykly konstruktor, mam : "<< *pointer << std::endl;
     }
     MySmartPointer(const MySmartPointer &otherPonter)
     {
         pointer = otherPonter.pointer;
         counter = otherPonter.counter;
         counter->increment();
-        if (DEBUG) std::cout<<"konstruktor kopiujacy mam : "<< *pointer << std::endl;
     }
+
     ~MySmartPointer() {
         clearSafely();
-        if (DEBUG) std::cout<<"destruktor"<<std::endl;
     }
     T& operator*() { return(*pointer); }
     T* operator->() { return(pointer); }
@@ -47,7 +45,6 @@ public:
         pointer = otherPointer.pointer;
         counter = otherPointer.counter;
         counter->increment();
-        if (DEBUG) std::cout<<"operator przypisania : "<< *pointer << std::endl;
         return (*this);
     }
     T *getPointer(){
@@ -60,7 +57,6 @@ private:
     {
         counter->decrement();
         if (counter->get() == 0) {
-            std::cout<<"alibaba";
             delete[] pointer;
             delete counter;
         }
