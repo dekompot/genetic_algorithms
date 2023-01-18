@@ -1,13 +1,8 @@
-//
-// Created by 48791 on 14.12.2022.
-//
-
 #ifndef ZADANKO5_MYSMARTPOINTER_H
 #define ZADANKO5_MYSMARTPOINTER_H
 
 #include <iostream>
 
-#define DEBUG true
 class RefCounter
 {
 public:
@@ -19,28 +14,28 @@ private:
     int counter;
 };
 
-template <typename T> class MySmartPointer
+template <typename T> class SmartPointer
 {
 public:
-    MySmartPointer(T *otherPointer)
+    SmartPointer(T *otherPointer)
     {
         pointer = otherPointer;
         counter = new RefCounter();
         counter->increment();
     }
-    MySmartPointer(const MySmartPointer &otherPonter)
+    SmartPointer(const SmartPointer &otherPonter)
     {
         pointer = otherPonter.pointer;
         counter = otherPonter.counter;
         counter->increment();
     }
 
-    ~MySmartPointer() {
+    ~SmartPointer() {
         clearSafely();
     }
     T& operator*() { return(*pointer); }
     T* operator->() { return(pointer); }
-    MySmartPointer operator=(const MySmartPointer &otherPointer){
+    SmartPointer operator=(const SmartPointer &otherPointer){
         this->clearSafely();
         pointer = otherPointer.pointer;
         counter = otherPointer.counter;
@@ -57,7 +52,7 @@ private:
     {
         counter->decrement();
         if (counter->get() == 0) {
-            delete[] pointer;
+            delete pointer;
             delete counter;
         }
     }
@@ -66,4 +61,4 @@ private:
 
 
 
-#endif //ZADANKO5_MYSMARTPOINTER_H
+#endif

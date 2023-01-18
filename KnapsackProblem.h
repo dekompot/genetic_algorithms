@@ -7,7 +7,7 @@
 
 
 #include "Problem.h"
-#include "MySmartPointer.h"
+#include "SmartPointer.h"
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -15,28 +15,37 @@
 class KnapsackProblem : public Problem {
 
 public:
-    bool valid;
 
-    KnapsackProblem(double knapsackCapacity, MySmartPointer<vector<double>> productsWeights,
-                    MySmartPointer<vector<double>> productsValues)
-                    : knapsackCapacity(knapsackCapacity),productsWeights(productsWeights),
-                    productsValues(productsValues){
-        if (knapsackCapacity <= 0 || isVectorValid(productsWeights)
-        || isVectorValid(productsValues)) valid = false;
-        else valid = true;}
-
-    double getFitness(MySmartPointer<vector<bool>> genotype) override {
-        double fitness = 0;
-        if (isAllowed(genotype))
+    KnapsackProblem() :
+        productsValues(SmartPointer<vector<double>>(new vector<double>())),
+        productsWeights(SmartPointer<vector<double>>(new vector<double>()))
         {
-            for (int productIndex = 0 ; productIndex < genotype->size() ; productIndex++)
-                if (genotype->at(productIndex))
-                    fitness+=productsValues->at(productIndex);
+            valid = false;
+            size = -1;
+            knapsackCapacity = -1;
         }
+
+    KnapsackProblem(bool valid, int size, int knapsackCapacity, const SmartPointer<vector<double>> &productsWeights,
+                    const SmartPointer<vector<double>> &productsValues) : valid(valid), size(size),
+                                                                          knapsackCapacity(knapsackCapacity),
+                                                                          productsWeights(productsWeights),
+                                                                          productsValues(productsValues) {}
+
+    double getFitness(vector<int> *genotype) override {
+        double fitness = 0, sum = 0;
+        for (int productIndex = 0 ; productIndex < genotype->size() ; productIndex++)
+        {
+            if (genotype->at(productIndex) == 1)
+            {
+                sum += productsWeights->at(productIndex);
+                fitness += productsValues->at(productIndex);
+            }
+        }
+        if (sum > knapsackCapacity) fitness = 0;
         return fitness;
     }
 
-    KnapsackProblem static checkAndReadFile(string productInformationFile, string knapsackCapacityFile){
+    /*KnapsackProblem static checkAndReadFile(string productInformationFile, string knapsackCapacityFile){
         double knapsackCapacity;
         vector<double> *productsWeights;
         vector<double> *productsValues;
@@ -67,29 +76,25 @@ public:
             }
         }
         return KnapsackProblem(knapsackCapacity,
-                               MySmartPointer<vector<double>>(productsWeights),
-                               MySmartPointer<vector<double>>(productsValues));
+                               SmartPointer<vector<double>>(productsWeights),
+                               SmartPointer<vector<double>>(productsValues));
+    }*/
+
+    bool isValid() override {
+        return valid;
     }
 
+    int getSize() override {
+        return size;
+    }
 private:
+    bool valid;
+    int size;
     int knapsackCapacity;
-    MySmartPointer<vector<double>> productsWeights;
-    MySmartPointer<vector<double>> productsValues;
+    SmartPointer<vector<double>> productsWeights;
+    SmartPointer<vector<double>> productsValues;
 
-    bool isAllowed (MySmartPointer<vector<bool>> genotype)
-    {
-        double sum = 0;
-        for (int productIndex = 0 ; productIndex < genotype->size() ; productIndex++)
-        {
-            if (genotype->at(productIndex)) {
-                sum+=productsWeights->at(productIndex);
-                if (sum > knapsackCapacity) return false;
-            }
-        }
-        return true;
-    }
-
-    bool isVectorValid(MySmartPointer<vector<double>> suspectedVector)
+    /*bool isVectorValid(SmartPointer<vector<double>> suspectedVector)
     {
         if (suspectedVector->empty()) return true;
         for (int i = 0 ; i < suspectedVector->size() ; i++)
@@ -97,7 +102,7 @@ private:
             if (suspectedVector->at(i) < 0) return true;
         }
         return false;
-    }
+    }*/
 };
 
 

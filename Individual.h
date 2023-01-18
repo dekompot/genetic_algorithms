@@ -5,23 +5,26 @@
 #ifndef MINIPROJEKT_INDIVIDUAL_H
 #define MINIPROJEKT_INDIVIDUAL_H
 #include <vector>
-#include "MySmartPointer.h"
+#include <random>
+#include "SmartPointer.h"
 #include "Problem.h"
 
 using namespace std;
 
 class Individual {
 public:
-    double getFitness(Problem problem) {
-        problem.getFitness(genotype);
-    }
-    void cross(Individual otherIndividual, int crossPoint)
-    {
+    explicit Individual(SmartPointer<Problem> newProblem);
+    double getFitness() {problem->getFitness(&genotype);}
+    vector<SmartPointer<Individual>> cross(SmartPointer<Individual> otherIndividual, double crossingProbability);
+    void mutate(double mutationProbability);
 
-    }
+    const vector<int> &getGenotype() const;
+
 private:
-    MySmartPointer<vector<bool>> genotype;
-    private: int size;
+    explicit Individual(SmartPointer<Problem> newProblem,vector<int> genotype);
+    vector<int> genotype;
+    SmartPointer<Problem> problem;
+    int size;
 };
 
 

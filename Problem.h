@@ -6,14 +6,24 @@
 #define MINIPROJEKT_PROBLEM_H
 #include <vector>
 #include <string>
-#include "MySmartPointer.h"
+#include "SmartPointer.h"
 
 using namespace std;
 
 
 class Problem {
 public:
-    virtual double getFitness(MySmartPointer<vector<bool>> genotype) = 0;
+    virtual double getFitness(vector<int> *genotype) = 0;
+    virtual bool isValid()  {
+        return valid;
+    }
+
+    virtual int getSize()  {
+        return size;
+    }
+private:
+    bool valid;
+    int size;
 };
 
 
