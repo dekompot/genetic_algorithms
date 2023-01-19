@@ -17,7 +17,6 @@ public:
     double getFitness() {problem->getFitness(&genotype);}
     vector<SmartPointer<Individual>> cross(SmartPointer<Individual> otherIndividual, double crossingProbability);
     void mutate(double mutationProbability);
-
     const vector<int> &getGenotype() const;
 
 private:

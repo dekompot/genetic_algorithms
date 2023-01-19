@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "SmartPointer.h"
+#include "ProblemFileOpeningOutcome.h"
 
 using namespace std;
 
@@ -14,16 +15,24 @@ using namespace std;
 class Problem {
 public:
     virtual double getFitness(vector<int> *genotype) = 0;
-    virtual bool isValid()  {
+    virtual ProblemFileOpeningOutcome readFromFile(string const&fileName) = 0;
+    bool isValid()  {
         return valid;
     }
-
-    virtual int getSize()  {
+    int getSize()  {
         return size;
     }
-private:
+protected:
     bool valid;
     int size;
+public:
+    void setValid(bool valid) {
+        Problem::valid = valid;
+    }
+
+    void setSize(int size) {
+        Problem::size = size;
+    }
 };
 
 

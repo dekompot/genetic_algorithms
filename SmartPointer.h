@@ -29,6 +29,13 @@ public:
         counter = otherPonter.counter;
         counter->increment();
     }
+    SmartPointer(SmartPointer&& otherPointer)
+    {
+        counter = otherPointer.counter;
+        pointer = otherPointer.pointer;
+        otherPointer.counter = new RefCounter();
+        otherPointer.pointer = NULL;
+    }
 
     ~SmartPointer() {
         clearSafely();

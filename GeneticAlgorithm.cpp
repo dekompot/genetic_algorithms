@@ -5,16 +5,20 @@
 #include <random>
 #include "GeneticAlgorithm.h"
 
-Individual GeneticAlgorithm::solve(SmartPointer<Problem> problem)
+SmartPointer<Individual> GeneticAlgorithm::solve(SmartPointer<Problem> problem)
 {
     vector<SmartPointer<Individual>> population = generatePopulation(problem);
-    for (int i = 0 ; i < 100 ;i++)
-    {
-        population.at(i)->getFitness();
-        population = cross(population);
-        population = mutate(population);
+    Individual bestSolution(problem);
+    for (int i = 0 ; i < 100 ;i++) {
+        cross(&population);
+        mutate(&population);
+        bestSolution = getBestSolution(bestSolution, &population);
+        if (bestSolution.getFitness() == 7)
+            cout << "!";
+        else cout <<"0";
+
     }
-    return getBestSolution(population);
+    return &bestSolution;
 }
 
 vector<SmartPointer<Individual>> GeneticAlgorithm::generatePopulation(SmartPointer<Problem> problem) {
@@ -26,13 +30,13 @@ vector<SmartPointer<Individual>> GeneticAlgorithm::generatePopulation(SmartPoint
     return move(population);
 }
 
-vector<SmartPointer<Individual>> GeneticAlgorithm::cross(vector<SmartPointer<Individual>> population) {
+void GeneticAlgorithm::cross(vector<SmartPointer<Individual>> *population) {
     vector<SmartPointer<Individual>> newPopulation;
     vector<SmartPointer<Individual>> children;
-    SmartPointer<Individual> firstChosenIndividual(population.at(0));
-    SmartPointer<Individual> secondChosenIndividual(population.at(0));
-    SmartPointer<Individual> thirdChosenIndividual(population.at(0));
-    SmartPointer<Individual> fourthChosenIndividual(population.at(0));
+    SmartPointer<Individual> firstChosenIndividual(population->at(0));
+    SmartPointer<Individual> secondChosenIndividual(population->at(0));
+    SmartPointer<Individual> thirdChosenIndividual(population->at(0));
+    SmartPointer<Individual> fourthChosenIndividual(population->at(0));
 
     while(newPopulation.size() < populationSize)
     {
@@ -40,10 +44,10 @@ vector<SmartPointer<Individual>> GeneticAlgorithm::cross(vector<SmartPointer<Ind
         mt19937 gen(rd());
         uniform_int_distribution<> individualsDistribution(0, populationSize-1);
 
-        firstChosenIndividual = population.at(individualsDistribution(gen));
-        secondChosenIndividual = population.at(individualsDistribution(gen));
-        thirdChosenIndividual = population.at(individualsDistribution(gen));
-        fourthChosenIndividual = population.at(individualsDistribution(gen));
+        firstChosenIndividual = population->at(individualsDistribution(gen));
+        secondChosenIndividual = population->at(individualsDistribution(gen));
+        thirdChosenIndividual = population->at(individualsDistribution(gen));
+        fourthChosenIndividual = population->at(individualsDistribution(gen));
         if (firstChosenIndividual->getFitness() < thirdChosenIndividual->getFitness())
             firstChosenIndividual = thirdChosenIndividual;
         if (secondChosenIndividual->getFitness() < fourthChosenIndividual->getFitness())
@@ -53,23 +57,23 @@ vector<SmartPointer<Individual>> GeneticAlgorithm::cross(vector<SmartPointer<Ind
         newPopulation.push_back(children.at(0));
         newPopulation.push_back(children.at(1));
     }
-    return move(population);
 }
 
-vector<SmartPointer<Individual>> GeneticAlgorithm::mutate(vector<SmartPointer<Individual>> population) {
+void GeneticAlgorithm::mutate(vector<SmartPointer<Individual>> *population) {
     for (int i = 0 ; i < populationSize ; i++)
     {
-        population.at(i)->mutate(mutationProbability);
+        population->at(i)->mutate(mutationProbability);
     }
-    return population;
 }
 
-Individual GeneticAlgorithm::getBestSolution(vector<SmartPointer<Individual>> population) {
-    Individual individual = *population.at(0);
-    for (int i = 0 ; i < population.size() ; i++)
+Individual GeneticAlgorithm::getBestSolution(Individual currBestSolution, vector<SmartPointer<Individual>> *population) {
+    for (int i = 0 ; i < population->size() ; i++)
     {
-        if (population.at(i)->getFitness() > individual.getFitness())
-            individual = *population.at(i);
+        if (population->at(i)->getFitness() > currBestSolution.getFitness())
+        {
+            currBestSolution = *population->at(i);
+        }
     }
-    return individual;
+    if (currBestSolution.getFitness() == 7) cout << ">";
+    return currBestSolution;
 }

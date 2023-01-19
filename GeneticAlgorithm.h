@@ -5,27 +5,25 @@
 #ifndef MINIPROJEKT_GENETICALGORITHM_H
 #define MINIPROJEKT_GENETICALGORITHM_H
 
-
 #include "Individual.h"
 #include "Problem.h"
 
 class GeneticAlgorithm {
 public:
-    GeneticAlgorithm(int populationSize, double mutationProbability, double crossingProbability){
-        this->populationSize = populationSize;
-        this->mutationProbability = mutationProbability;
-        this->crossingProbability = crossingProbability;
+    GeneticAlgorithm(int newPopulationSize, double newMutationProbability, double newCrossingProbability) {
+        populationSize = newPopulationSize;
+        mutationProbability = newMutationProbability;
+        crossingProbability = newCrossingProbability;
     }
-    Individual solve(SmartPointer<Problem> problem);
+    SmartPointer<Individual> solve(SmartPointer<Problem> problem);
 private:
     vector<SmartPointer<Individual>> generatePopulation(SmartPointer<Problem> problem);
-    vector<SmartPointer<Individual>> cross(vector<SmartPointer<Individual>> population);
-    vector<SmartPointer<Individual>> mutate(vector<SmartPointer<Individual>> population);
-    Individual getBestSolution(vector<SmartPointer<Individual>> population);
+    void cross(vector<SmartPointer<Individual>> *population);
+    void mutate(vector<SmartPointer<Individual>> *population);
+    Individual getBestSolution(Individual currBestSolution, vector<SmartPointer<Individual>> *population);
     int populationSize;
     double mutationProbability;
     double crossingProbability;
-
 };
 
 
