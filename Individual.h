@@ -14,6 +14,11 @@ using namespace std;
 class Individual {
 public:
     explicit Individual(SmartPointer<Problem> newProblem);
+    Individual(const Individual &otherPonter) : problem(otherPonter.problem)
+    {
+        size = otherPonter.size;
+        genotype = otherPonter.genotype;
+    }
     double getFitness() {problem->getFitness(&genotype);}
     vector<SmartPointer<Individual>> cross(SmartPointer<Individual> otherIndividual, double crossingProbability);
     void mutate(double mutationProbability);

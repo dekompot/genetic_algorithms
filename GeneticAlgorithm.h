@@ -17,13 +17,16 @@ public:
     }
     SmartPointer<Individual> solve(SmartPointer<Problem> problem);
 private:
-    vector<SmartPointer<Individual>> generatePopulation(SmartPointer<Problem> problem);
-    void cross(vector<SmartPointer<Individual>> *population);
-    void mutate(vector<SmartPointer<Individual>> *population);
-    Individual getBestSolution(Individual currBestSolution, vector<SmartPointer<Individual>> *population);
+    SmartPointer<vector<SmartPointer<Individual>>> generatePopulation(SmartPointer<Problem> problem);
+    SmartPointer<vector<SmartPointer<Individual>>> cross(SmartPointer<vector<SmartPointer<Individual>>> population);
+    void mutate(SmartPointer<vector<SmartPointer<Individual>>> population);
+    SmartPointer<Individual> getBestSolution(SmartPointer<Individual> bestSolution, SmartPointer<vector<SmartPointer<Individual>>> population);
+    int parentIndexOutOfEncounter(SmartPointer<vector<SmartPointer<Individual>>> population, int encounterSize);
     int populationSize;
     double mutationProbability;
     double crossingProbability;
+    const static int ENCOUNTER_SIZE = 2;
+    const static int ITERATIONS = 100;
 };
 
 

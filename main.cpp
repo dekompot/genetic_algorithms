@@ -6,8 +6,8 @@ using namespace std;
 
 int main() {
     srand( (unsigned)time( NULL ) );
-    firstTest();
-    //testAllFiles();
+    //firstTest();
+    testAllFiles();
 
     return 0;
 }

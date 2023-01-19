@@ -39,7 +39,7 @@ static void firstTest()
     weights->push_back(2);
     KnapsackProblem *myProblem = new KnapsackProblem(true,4,5,weights,values);
     SmartPointer<Problem> problemmo(myProblem);
-    solveProblem(problemmo,1,8,0.1,0.5);
+    solveProblem(problemmo,100,4,0.1,0.5);
 }
 
 static void loadAndTestKnapsack(string const&fileName, int iterations, double populationSize, double mutationProbability, double crossingProbability)
@@ -68,7 +68,7 @@ static void testAllFiles()
     loadAndTestKnapsack("C:\\Users\\48791\\CLionProjects\\MiniProjekt\\Files\\instances\\dupa",
                         100,8,0.1,0.5);
     loadAndTestKnapsack("C:\\Users\\48791\\CLionProjects\\MiniProjekt\\Files\\instances\\correctKnapsack",
-                        100,8,0.1,0.5);
+                        100,8,0.1,0.3);
 }
 
 

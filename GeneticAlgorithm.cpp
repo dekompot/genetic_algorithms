@@ -7,73 +7,71 @@
 
 SmartPointer<Individual> GeneticAlgorithm::solve(SmartPointer<Problem> problem)
 {
-    vector<SmartPointer<Individual>> population = generatePopulation(problem);
-    Individual bestSolution(problem);
-    for (int i = 0 ; i < 100 ;i++) {
-        cross(&population);
-        mutate(&population);
-        bestSolution = getBestSolution(bestSolution, &population);
-        if (bestSolution.getFitness() == 7)
-            cout << "!";
-        else cout <<"0";
-
+    SmartPointer<vector<SmartPointer<Individual>>> population = generatePopulation(problem);
+    SmartPointer<Individual> bestSolution = new Individual(problem);
+    for (int i = 0 ; i < ITERATIONS ;i++) {
+        population = cross(population);
+        mutate(population);
+        bestSolution = getBestSolution(bestSolution, population);
     }
-    return &bestSolution;
+    return bestSolution;
 }
 
-vector<SmartPointer<Individual>> GeneticAlgorithm::generatePopulation(SmartPointer<Problem> problem) {
-    vector<SmartPointer<Individual>> population;
+SmartPointer<vector<SmartPointer<Individual>>> GeneticAlgorithm::generatePopulation(SmartPointer<Problem> problem) {
+    SmartPointer<vector<SmartPointer<Individual>>> population (new vector<SmartPointer<Individual>>);
     for (int i = 0 ; i < populationSize ; i++)
     {
-        population.push_back(SmartPointer<Individual>(new Individual(problem)));
+        population->push_back(SmartPointer<Individual>(new Individual(problem)));
     }
     return move(population);
 }
 
-void GeneticAlgorithm::cross(vector<SmartPointer<Individual>> *population) {
-    vector<SmartPointer<Individual>> newPopulation;
+SmartPointer<vector<SmartPointer<Individual>>> GeneticAlgorithm::cross(SmartPointer<vector<SmartPointer<Individual>>>population) {
+    SmartPointer<vector<SmartPointer<Individual>>> newPopulation (new vector<SmartPointer<Individual>>);
     vector<SmartPointer<Individual>> children;
-    SmartPointer<Individual> firstChosenIndividual(population->at(0));
-    SmartPointer<Individual> secondChosenIndividual(population->at(0));
-    SmartPointer<Individual> thirdChosenIndividual(population->at(0));
-    SmartPointer<Individual> fourthChosenIndividual(population->at(0));
 
-    while(newPopulation.size() < populationSize)
+    while(newPopulation->size() < populationSize)
     {
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<> individualsDistribution(0, populationSize-1);
-
-        firstChosenIndividual = population->at(individualsDistribution(gen));
-        secondChosenIndividual = population->at(individualsDistribution(gen));
-        thirdChosenIndividual = population->at(individualsDistribution(gen));
-        fourthChosenIndividual = population->at(individualsDistribution(gen));
-        if (firstChosenIndividual->getFitness() < thirdChosenIndividual->getFitness())
-            firstChosenIndividual = thirdChosenIndividual;
-        if (secondChosenIndividual->getFitness() < fourthChosenIndividual->getFitness())
-            secondChosenIndividual = fourthChosenIndividual;
-
-        children = firstChosenIndividual->cross(secondChosenIndividual,crossingProbability);
-        newPopulation.push_back(children.at(0));
-        newPopulation.push_back(children.at(1));
+        SmartPointer<Individual> firstParent = population->at(parentIndexOutOfEncounter(population,ENCOUNTER_SIZE));
+        SmartPointer<Individual> secondParent = population->at(parentIndexOutOfEncounter(population,ENCOUNTER_SIZE));
+        children = firstParent->cross(secondParent,crossingProbability);
+        newPopulation->push_back(children.at(0));
+        newPopulation->push_back(children.at(1));
     }
+
+    return move(newPopulation);
 }
 
-void GeneticAlgorithm::mutate(vector<SmartPointer<Individual>> *population) {
+void GeneticAlgorithm::mutate(SmartPointer<vector<SmartPointer<Individual>>> population) {
     for (int i = 0 ; i < populationSize ; i++)
     {
         population->at(i)->mutate(mutationProbability);
     }
 }
 
-Individual GeneticAlgorithm::getBestSolution(Individual currBestSolution, vector<SmartPointer<Individual>> *population) {
+SmartPointer<Individual> GeneticAlgorithm::getBestSolution(SmartPointer<Individual> bestSolution,SmartPointer<vector<SmartPointer<Individual>>> population) {
     for (int i = 0 ; i < population->size() ; i++)
     {
-        if (population->at(i)->getFitness() > currBestSolution.getFitness())
+        if (population->at(i)->getFitness() > bestSolution->getFitness())
         {
-            currBestSolution = *population->at(i);
+            bestSolution = population->at(i);
         }
     }
-    if (currBestSolution.getFitness() == 7) cout << ">";
-    return currBestSolution;
+
+    return SmartPointer<Individual>(new Individual(*bestSolution));
+}
+
+int GeneticAlgorithm::parentIndexOutOfEncounter(SmartPointer<vector<SmartPointer<Individual>>> population,
+                                                int encounterSize) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> individualsDistribution(0, populationSize-1);
+    int parentIndex = individualsDistribution(gen), randomIndex;
+    for (int i = 1 ; i < encounterSize ; i++)
+    {
+        randomIndex = individualsDistribution(gen);
+        if(population->at(randomIndex)->getFitness() > population->at(parentIndex)->getFitness())
+            parentIndex = randomIndex;
+    }
+    return parentIndex;
 }

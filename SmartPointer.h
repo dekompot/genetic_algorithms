@@ -23,10 +23,10 @@ public:
         counter = new RefCounter();
         counter->increment();
     }
-    SmartPointer(const SmartPointer &otherPonter)
+    SmartPointer(const SmartPointer &otherPointer)
     {
-        pointer = otherPonter.pointer;
-        counter = otherPonter.counter;
+        pointer = otherPointer.pointer;
+        counter = otherPointer.counter;
         counter->increment();
     }
     SmartPointer(SmartPointer&& otherPointer)
