@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 #include "SmartPointer.h"
-#include "ProblemFileOpeningOutcome.h"
+#include "Outcome.h"
 
 using namespace std;
 

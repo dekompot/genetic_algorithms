@@ -8,10 +8,9 @@
 
 #include "Problem.h"
 #include "SmartPointer.h"
-#include "ProblemFileOpeningOutcome.h"
+#include "Outcome.h"
 #include <vector>
 #include <fstream>
-#include <sstream>
 
 class KnapsackProblem : public Problem {
 

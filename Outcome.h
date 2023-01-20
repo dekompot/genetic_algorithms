@@ -1,0 +1,23 @@
+//
+// Created by 48791 on 19.01.2023.
+//
+
+#ifndef MINIPROJEKT_OUTCOME_H
+#define MINIPROJEKT_OUTCOME_H
+
+enum class GeneticAlgorithmRunOutcome
+{
+    SUCCESS,
+    ERROR_INVALID_ALGORITHM_PARAMETERS,
+    ERROR_INVALID_PROBLEM
+};
+
+enum class ProblemFileOpeningOutcome
+{
+    SUCCESS,
+    ERROR_FILE_NOT_FOUND,
+    ERROR_FILE_INCORRECT_FORMAT,
+    ERROR_INCORRECT_DATA
+};
+
+#endif //MINIPROJEKT_OUTCOME_H

@@ -4,29 +4,29 @@
 
 #include <random>
 #include "GeneticAlgorithm.h"
+#include "Outcome.h"
 
-SmartPointer<Individual> GeneticAlgorithm::solve(SmartPointer<Problem> problem)
+GeneticAlgorithmRunOutcome GeneticAlgorithm::run()
 {
-    SmartPointer<vector<SmartPointer<Individual>>> population = generatePopulation(problem);
-    SmartPointer<Individual> bestSolution = new Individual(problem);
+    if(!problem->isValid()) return GeneticAlgorithmRunOutcome::ERROR_INVALID_PROBLEM;
+    if(!isValid()) return GeneticAlgorithmRunOutcome::ERROR_INVALID_ALGORITHM_PARAMETERS;
+    generatePopulation();
     for (int i = 0 ; i < ITERATIONS ;i++) {
-        population = cross(population);
-        mutate(population);
-        bestSolution = getBestSolution(bestSolution, population);
+        cross();
+        mutate();
+        evaluate();
     }
-    return bestSolution;
+    return GeneticAlgorithmRunOutcome::SUCCESS;
 }
 
-SmartPointer<vector<SmartPointer<Individual>>> GeneticAlgorithm::generatePopulation(SmartPointer<Problem> problem) {
-    SmartPointer<vector<SmartPointer<Individual>>> population (new vector<SmartPointer<Individual>>);
+void GeneticAlgorithm::generatePopulation() {
     for (int i = 0 ; i < populationSize ; i++)
     {
         population->push_back(SmartPointer<Individual>(new Individual(problem)));
     }
-    return move(population);
 }
 
-SmartPointer<vector<SmartPointer<Individual>>> GeneticAlgorithm::cross(SmartPointer<vector<SmartPointer<Individual>>>population) {
+void GeneticAlgorithm::cross() {
     SmartPointer<vector<SmartPointer<Individual>>> newPopulation (new vector<SmartPointer<Individual>>);
     vector<SmartPointer<Individual>> children;
 
@@ -38,27 +38,23 @@ SmartPointer<vector<SmartPointer<Individual>>> GeneticAlgorithm::cross(SmartPoin
         newPopulation->push_back(children.at(0));
         newPopulation->push_back(children.at(1));
     }
-
-    return move(newPopulation);
 }
 
-void GeneticAlgorithm::mutate(SmartPointer<vector<SmartPointer<Individual>>> population) {
+void GeneticAlgorithm::mutate() {
     for (int i = 0 ; i < populationSize ; i++)
     {
         population->at(i)->mutate(mutationProbability);
     }
 }
 
-SmartPointer<Individual> GeneticAlgorithm::getBestSolution(SmartPointer<Individual> bestSolution,SmartPointer<vector<SmartPointer<Individual>>> population) {
+void GeneticAlgorithm::evaluate() {
     for (int i = 0 ; i < population->size() ; i++)
     {
         if (population->at(i)->getFitness() > bestSolution->getFitness())
         {
-            bestSolution = population->at(i);
+            bestSolution = SmartPointer<Individual>(new Individual(*population->at(i)));
         }
     }
-
-    return SmartPointer<Individual>(new Individual(*bestSolution));
 }
 
 int GeneticAlgorithm::parentIndexOutOfEncounter(SmartPointer<vector<SmartPointer<Individual>>> population,
@@ -74,4 +70,12 @@ int GeneticAlgorithm::parentIndexOutOfEncounter(SmartPointer<vector<SmartPointer
             parentIndex = randomIndex;
     }
     return parentIndex;
+}
+
+const SmartPointer<Individual> GeneticAlgorithm::getBestSolution() const {
+    return bestSolution;
+}
+
+bool GeneticAlgorithm::isValid() {
+    return populationSize > 0;
 }

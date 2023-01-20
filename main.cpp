@@ -6,8 +6,8 @@ using namespace std;
 
 int main() {
     srand( (unsigned)time( NULL ) );
-    //firstTest();
+    firstTest();
     testAllFiles();
-
+    cout<<"One max : " << oneMax(1000)<<endl;
     return 0;
 }

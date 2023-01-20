@@ -2,7 +2,7 @@
 // Created by 48791 on 19.01.2023.
 //
 #include "KnapsackProblem.h"
-#include "ProblemFileOpeningOutcome.h"
+#include "Outcome.h"
 
 KnapsackProblem::KnapsackProblem() :
         productsValues(SmartPointer<vector<double>>(new vector<double>())),

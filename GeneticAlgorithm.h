@@ -10,23 +10,33 @@
 
 class GeneticAlgorithm {
 public:
-    GeneticAlgorithm(int newPopulationSize, double newMutationProbability, double newCrossingProbability) {
+    GeneticAlgorithm(int newPopulationSize, double newMutationProbability, double newCrossingProbability,
+                     SmartPointer<Problem> problem) : problem(problem), population (new vector<SmartPointer<Individual>>),
+                                                      bestSolution(new Individual(problem)) {
         populationSize = newPopulationSize;
         mutationProbability = newMutationProbability;
         crossingProbability = newCrossingProbability;
     }
-    SmartPointer<Individual> solve(SmartPointer<Problem> problem);
+    GeneticAlgorithmRunOutcome run();
+
+    const SmartPointer<Individual> getBestSolution() const;
+
 private:
-    SmartPointer<vector<SmartPointer<Individual>>> generatePopulation(SmartPointer<Problem> problem);
-    SmartPointer<vector<SmartPointer<Individual>>> cross(SmartPointer<vector<SmartPointer<Individual>>> population);
-    void mutate(SmartPointer<vector<SmartPointer<Individual>>> population);
-    SmartPointer<Individual> getBestSolution(SmartPointer<Individual> bestSolution, SmartPointer<vector<SmartPointer<Individual>>> population);
+    void generatePopulation();
+    void cross();
+    void mutate();
+    void evaluate();
     int parentIndexOutOfEncounter(SmartPointer<vector<SmartPointer<Individual>>> population, int encounterSize);
+    bool isValid();
+
+    SmartPointer<Problem> problem;
+    SmartPointer<vector<SmartPointer<Individual>>> population;
+    SmartPointer<Individual> bestSolution;
     int populationSize;
     double mutationProbability;
     double crossingProbability;
     const static int ENCOUNTER_SIZE = 2;
-    const static int ITERATIONS = 100;
+    const static int ITERATIONS = 1000;
 };
 
 

@@ -4,18 +4,22 @@
 #include "Problem.h"
 #include "KnapsackProblem.h"
 #include "GeneticAlgorithm.h"
-#include "ProblemFileOpeningOutcome.h"
+#include "Outcome.h"
+#include "OneMaxProblem.h"
+
 #ifndef MINIPROJEKT_SOLVER_H
 #define MINIPROJEKT_SOLVER_H
 
 
 static void solveProblem(SmartPointer<Problem> problem, int iterations, int populationSize, double mutationProbability, double crossingProbability)
 {
-    GeneticAlgorithm myAlgorithm(populationSize,mutationProbability,crossingProbability);
+    GeneticAlgorithm myAlgorithm(populationSize, mutationProbability,
+                                 crossingProbability,problem);
     int optimalSolutionOccurences = 0;
-    for (int j = 0 ; j < iterations ; j++)
+    for (int i = 0 ; i < iterations ; i++)
     {
-        SmartPointer<Individual> individual = myAlgorithm.solve(problem);
+        myAlgorithm.run();
+        SmartPointer<Individual> individual = myAlgorithm.getBestSolution();
         if(individual->getGenotype().at(0)==0&&individual->getGenotype().at(1)==0&&
            individual->getGenotype().at(2)==1&&individual->getGenotype().at(3)==1)
             optimalSolutionOccurences++;
@@ -40,6 +44,20 @@ static void firstTest()
     KnapsackProblem *myProblem = new KnapsackProblem(true,4,5,weights,values);
     SmartPointer<Problem> problemmo(myProblem);
     solveProblem(problemmo,100,4,0.1,0.5);
+}
+static int oneMax(int size)
+{
+    OneMaxProblem *myProblem = new OneMaxProblem(size);
+    SmartPointer<Problem> problem(myProblem);
+    GeneticAlgorithm myAlgorithm(100, 0.1,0.5,problem);
+    myAlgorithm.run();
+    SmartPointer<Individual> individual = myAlgorithm.getBestSolution();
+    int counter = 0;
+    for (int i = 0 ; i < individual->getGenotype().size() ; i++)
+    {
+        if (individual->getGenotype().at(i) == 1) counter++;
+    }
+    return counter;
 }
 
 static void loadAndTestKnapsack(string const&fileName, int iterations, double populationSize, double mutationProbability, double crossingProbability)
