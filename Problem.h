@@ -15,6 +15,7 @@ using namespace std;
 class Problem {
 public:
     virtual double getFitness(vector<int> *genotype) = 0;
+    virtual ~Problem() = default;
     virtual ProblemFileOpeningOutcome readFromFile(string const&fileName) = 0;
     bool isValid()  {
         return valid;
@@ -25,7 +26,6 @@ public:
 protected:
     bool valid;
     int size;
-public:
     void setValid(bool valid) {
         Problem::valid = valid;
     }

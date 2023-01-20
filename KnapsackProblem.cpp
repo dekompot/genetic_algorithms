@@ -2,6 +2,8 @@
 // Created by 48791 on 19.01.2023.
 //
 #include "KnapsackProblem.h"
+
+#include <utility>
 #include "Outcome.h"
 
 KnapsackProblem::KnapsackProblem() :
@@ -13,10 +15,10 @@ KnapsackProblem::KnapsackProblem() :
     knapsackCapacity = -1;
 }
 
-KnapsackProblem::KnapsackProblem(bool valid, int size, int knapsackCapacity, const SmartPointer<vector<double>> &productsWeights,
-                                 const SmartPointer<vector<double>> &productsValues) : knapsackCapacity(knapsackCapacity),
-                                                                                       productsWeights(productsWeights),
-                                                                                       productsValues(productsValues) {
+KnapsackProblem::KnapsackProblem(bool valid, int size, int knapsackCapacity, SmartPointer<vector<double>> productsWeights,
+                                 SmartPointer<vector<double>> productsValues) : knapsackCapacity(knapsackCapacity),
+                                                                                       productsWeights(move(productsWeights)),
+                                                                                       productsValues(move(productsValues)) {
     setValid(valid);
     setSize(size);
 }

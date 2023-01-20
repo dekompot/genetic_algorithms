@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <random>
 #include "Problem.h"
@@ -13,8 +14,9 @@
 
 static void solveProblem(SmartPointer<Problem> problem, int iterations, int populationSize, double mutationProbability, double crossingProbability)
 {
+    random_device randomDevice;
     GeneticAlgorithm myAlgorithm(populationSize, mutationProbability,
-                                 crossingProbability,problem);
+                                 crossingProbability, std::move(problem), SmartPointer<mt19937>(new mt19937 (randomDevice())));
     int optimalSolutionOccurences = 0;
     for (int i = 0 ; i < iterations ; i++)
     {
@@ -29,27 +31,24 @@ static void solveProblem(SmartPointer<Problem> problem, int iterations, int popu
 
 static void firstTest()
 {
-    vector<double> *val = new vector<double>();
-    SmartPointer<vector<double>> values (val);
+    SmartPointer<vector<double>> values (new vector<double>());
     values->push_back(5);
     values->push_back(1);
     values->push_back(4);
     values->push_back(3);
-    vector<double> *wei = new vector<double>;
-    SmartPointer<vector<double>> weights (wei);
+    SmartPointer<vector<double>> weights (new vector<double>);
     weights->push_back(4);
     weights->push_back(1);
     weights->push_back(3);
     weights->push_back(2);
-    KnapsackProblem *myProblem = new KnapsackProblem(true,4,5,weights,values);
-    SmartPointer<Problem> problemmo(myProblem);
+    SmartPointer<Problem> problemmo(new KnapsackProblem(true,4,5,weights,values));
     solveProblem(problemmo,100,4,0.1,0.5);
 }
 static int oneMax(int size)
 {
-    OneMaxProblem *myProblem = new OneMaxProblem(size);
-    SmartPointer<Problem> problem(myProblem);
-    GeneticAlgorithm myAlgorithm(100, 0.1,0.5,problem);
+    SmartPointer<Problem> problem(new OneMaxProblem(size));
+    random_device randomDevice;
+    GeneticAlgorithm myAlgorithm(100, 0.2, 0.5, problem, SmartPointer<mt19937>(new mt19937 (randomDevice())));
     myAlgorithm.run();
     SmartPointer<Individual> individual = myAlgorithm.getBestSolution();
     int counter = 0;
@@ -79,13 +78,13 @@ static void loadAndTestKnapsack(string const&fileName, int iterations, double po
 
 static void testAllFiles()
 {
-    loadAndTestKnapsack("C:\\Users\\48791\\CLionProjects\\MiniProjekt\\Files\\instances\\incorrectFile",
+    loadAndTestKnapsack(R"(C:\Users\48791\CLionProjects\MiniProjekt\Files\instances\incorrectFile)",
                         100,8,0.1,0.5);
-    loadAndTestKnapsack("C:\\Users\\48791\\CLionProjects\\MiniProjekt\\Files\\instances\\incorrectKnapsack",
+    loadAndTestKnapsack(R"(C:\Users\48791\CLionProjects\MiniProjekt\Files\instances\incorrectKnapsack)",
                         100,8,0.1,0.5);
-    loadAndTestKnapsack("C:\\Users\\48791\\CLionProjects\\MiniProjekt\\Files\\instances\\dupa",
+    loadAndTestKnapsack(R"(C:\Users\48791\CLionProjects\MiniProjekt\Files\instances\dupa)",
                         100,8,0.1,0.5);
-    loadAndTestKnapsack("C:\\Users\\48791\\CLionProjects\\MiniProjekt\\Files\\instances\\correctKnapsack",
+    loadAndTestKnapsack(R"(C:\Users\48791\CLionProjects\MiniProjekt\Files\instances\correctKnapsack)",
                         100,8,0.1,0.3);
 }
 

@@ -3,19 +3,25 @@
 //
 #include "Individual.h"
 
-Individual::Individual(SmartPointer<Problem> newProblem) : problem(SmartPointer<Problem>(newProblem))
+Individual::Individual(SmartPointer<Problem> newProblem, SmartPointer<mt19937> generator) : problem(std::move(newProblem)),
+                                                                                            generator(generator)
 {
     size = problem->getSize();
-    random_device rd;
-    mt19937 gen(rd());
     uniform_int_distribution<> binaryDistribution(0, 1);
     for (int i = 0 ; i < size ; i++)
     {
-        genotype.push_back(binaryDistribution(gen));
+        genotype.push_back(binaryDistribution(*generator));
     }
 }
 
-Individual::Individual(SmartPointer<Problem> newProblem,vector<int> newGenotype) : problem(SmartPointer<Problem>(newProblem))
+Individual::Individual(const Individual &otherIndividual) : problem(otherIndividual.problem), generator(otherIndividual.generator)
+{
+    size = otherIndividual.size;
+    genotype = otherIndividual.genotype;
+}
+
+Individual::Individual(SmartPointer<Problem> newProblem,vector<int> newGenotype,SmartPointer<mt19937> generator) : problem(SmartPointer<Problem>(newProblem)),
+                                                                                                                   generator(generator)
 {
     genotype = newGenotype;
     size = problem->getSize();
@@ -29,17 +35,15 @@ vector<SmartPointer<Individual>> Individual::cross(SmartPointer<Individual> othe
     float randomProbability = (float) rand()/RAND_MAX;
     if (randomProbability < crossingProbability)
     {
-        random_device rd;
-        mt19937 gen(rd());
         uniform_int_distribution<> genesDistribution(0, size-1);
-        int crossPoint = genesDistribution(gen);
+        int crossPoint = genesDistribution(*generator);
         for (int i = 0 ; i < crossPoint ; i++) {
             firstGenotype.at(i) = otherIndividual->genotype.at(i);
             secondGenotype.at(i) = genotype.at(i);
         }
     }
-    children.push_back(SmartPointer<Individual>(new Individual(problem,firstGenotype)));
-    children.push_back(SmartPointer<Individual>(new Individual(problem,secondGenotype)));
+    children.push_back(SmartPointer<Individual>(new Individual(problem,firstGenotype,generator)));
+    children.push_back(SmartPointer<Individual>(new Individual(problem,secondGenotype,generator)));
     return move(children);
 }
 

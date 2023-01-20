@@ -5,33 +5,37 @@
 #ifndef MINIPROJEKT_GENETICALGORITHM_H
 #define MINIPROJEKT_GENETICALGORITHM_H
 
+#include <utility>
+
 #include "Individual.h"
 #include "Problem.h"
 
 class GeneticAlgorithm {
 public:
     GeneticAlgorithm(int newPopulationSize, double newMutationProbability, double newCrossingProbability,
-                     SmartPointer<Problem> problem) : problem(problem), population (new vector<SmartPointer<Individual>>),
-                                                      bestSolution(new Individual(problem)) {
+                     SmartPointer<Problem> problem, SmartPointer<mt19937> generator) : problem(problem),
+                                                                                       bestSolution(new Individual(problem,generator)),
+                                                                                       generator(std::move(generator)) {
         populationSize = newPopulationSize;
         mutationProbability = newMutationProbability;
         crossingProbability = newCrossingProbability;
     }
     GeneticAlgorithmRunOutcome run();
 
-    const SmartPointer<Individual> getBestSolution() const;
+    SmartPointer<Individual> getBestSolution() const;
 
 private:
     void generatePopulation();
     void cross();
     void mutate();
     void evaluate();
-    int parentIndexOutOfEncounter(SmartPointer<vector<SmartPointer<Individual>>> population, int encounterSize);
+    int parentIndexOutOfEncounter(int encounterSize);
     bool isValid();
 
     SmartPointer<Problem> problem;
-    SmartPointer<vector<SmartPointer<Individual>>> population;
+    vector<SmartPointer<Individual>> population;
     SmartPointer<Individual> bestSolution;
+    SmartPointer<mt19937> generator;
     int populationSize;
     double mutationProbability;
     double crossingProbability;

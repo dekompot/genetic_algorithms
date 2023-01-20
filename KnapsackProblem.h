@@ -17,8 +17,8 @@ class KnapsackProblem : public Problem {
 public:
 
     explicit KnapsackProblem();
-    explicit KnapsackProblem(bool valid, int size, int knapsackCapacity, const SmartPointer<vector<double>> &productsWeights,
-                    const SmartPointer<vector<double>> &productsValues);
+    explicit KnapsackProblem(bool valid, int size, int knapsackCapacity, SmartPointer<vector<double>> productsWeights,
+                    SmartPointer<vector<double>> productsValues);
     double getFitness(vector<int> *genotype) override;
     ProblemFileOpeningOutcome readFromFile(string const&fileName) override;
 private:
